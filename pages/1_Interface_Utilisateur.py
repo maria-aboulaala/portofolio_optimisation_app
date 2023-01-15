@@ -14,7 +14,7 @@ with st.form(key="my_form"):
 
 
 
-    tickers = st.multiselect('Coins', ['BTC-USD', 'ETH-USD', 'XRP-USD', 'BCH-USD','LTC-USD','USDT-USD','LINK-USD','ADA-USD','DOT-USD','BSV-USD','EOS-USD','ATOM-USD','SOL-USD','CRO-USD','XMR-USD'])
+    tickers = st.multiselect('Coins', ['BTC-USD', 'ETH-USD', 'XRP-USD', 'BCH-USD','LTC-USD','USDT-USD','LINK-USD','ADA-USD','DOT-USD','BSV-USD','EOS-USD','ATOM-USD','SOL-USD','CRO-USD','XMR-USD'], default='BTC-USD')
     target_return = st.slider('Target Return', 0.0, 0.2, 0.1)
     st.form_submit_button("Simuler")
 
