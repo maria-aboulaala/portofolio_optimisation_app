@@ -399,7 +399,7 @@ language='python')
 
 st.markdown(
     """
-    > Les lignes de code que vous avez fournies définissent deux fonctions :
+    > le code définit deux fonctions :
     - La première fonction "actual_return" prend en entrée les rendements réels et les poids d'un portefeuille, calcule le rendement et la covariance du portefeuille et retourne ces valeurs.
     - La deuxième fonction "optimisation" prend en entrée les rendements prévus, les rendements réels, les paramètres lam1 et lam2. Elle utilise ces données pour optimiser les poids de portefeuille en utilisant la méthode de minimisation de scipy
     > La fonction optimisation utilise des contraintes d'égalité pour garantir que la somme des poids de chaque actif est égale à 1. La fonction utilise également un critère de coût pour maximiser le ratio de sharpe en minimisant la variance du portefeuille.
