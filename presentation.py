@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 
-st.title('Optimisation d un portfeuille de crypto utilisant le machine learning')
+st.title('Optimisation d un portfeuille de crypto utilisant le machine learning :bar_chart:')
 
 
 
@@ -338,3 +338,128 @@ st.code(code10,
 language='python')
 
 st.image('results.png')
+
+st.title(':pushpin: Phase finale')
+st.header('Optimiation du modele')
+
+
+st.markdown(
+    """
+    > Le code contient:
+    - La première fonction "mean_ret" prend en entrée un dataframe et une longueur, elle calcule la somme des rendements sur la période spécifiée par la longueur et retourne la moyenne des rendements.
+    - La seconde fonction "monthdelta" prend en entrée une date et un delta (nombre de mois), elle retourne la date qui est delta mois après la date d'entrée.
+    - La troisième fonction "windowGenerator" prend en entrée un dataframe, une longueur de fenêtre, une longueur de horizon, un pas de déplacement et un booléen (cummulative). Elle retourne une liste de fenêtres temporelles qui peuvent être utilisées pour les entraînements et les tests pour les modèles de machine learning.
+    > La fonction windowGenerator utilise la fonction monthdelta pour générer les fenêtres temporelles en fonction de la longueur de fenêtre, de la longueur de horizon et du pas de déplacement spécifiés. Elle retourne également une liste des fenêtres d'horizon qui peuvent être utilisées pour évaluer la performance des modèles entraînés sur les fenêtres temporelles.
+   """
+)
+
+code11 = '''
+#Mean returns function
+def mean_ret(data,length):
+    return data.sum()/length
+
+def monthdelta (date,delta):
+    m,y = (date.mounth+delta)%12 , date.year + ((date.month)+delta-1) // 12
+    if not m: m = 12
+    d = min(date.day, [31, 29 if y%4==0 and not y%400==0 else 28,31,30,31,30,31,31,30,31,30,31][m-1])
+    new_date = (date.replace(day=d,month=m, year=y))
+    return parse(new_date.strftime('%Y-%m-%d'))
+
+def windowGenerator (dataframe, lookback, horizon, step, cummulative = False):
+    if cummulative:
+        c = lookback
+        step = horizon
+        
+    initial = min(dataframe.index)
+    windows = []
+    horizons = []
+
+    while initial <= monthdelta(max(dataframe.index), -lookback):
+        windowStart = initial
+        windowEnd = monthdelta(windowStart, lookback)
+        if cummulative:
+            windowStart = min(dataframe.index)
+            windowEnd = monthdelta(windowStart, c) + timedelta(days=1)
+            c += horizon
+        horizonStart = windowEnd + timedelta(days=1)
+        horizonEnd = monthdelta(horizonStart, horizon)
+
+        lookbackWindow = dataframe[windowStart:windowEnd]
+        horizonWindow = dataframe[horizonStart:horizonEnd]
+
+        windows.append(lookbackWindow)
+        horizons.append(horizonWindow)
+
+        initial = monthdelta(initial, step)
+
+    return windows, horizons
+'''
+st.code(code11, 
+language='python')
+
+st.markdown(
+    """
+    > Les lignes de code que vous avez fournies définissent deux fonctions :
+    - La première fonction "actual_return" prend en entrée les rendements réels et les poids d'un portefeuille, calcule le rendement et la covariance du portefeuille et retourne ces valeurs.
+    - La deuxième fonction "optimisation" prend en entrée les rendements prévus, les rendements réels, les paramètres lam1 et lam2. Elle utilise ces données pour optimiser les poids de portefeuille en utilisant la méthode de minimisation de scipy
+    > La fonction optimisation utilise des contraintes d'égalité pour garantir que la somme des poids de chaque actif est égale à 1. La fonction utilise également un critère de coût pour maximiser le ratio de sharpe en minimisant la variance du portefeuille.
+    Enfin, la fonction retourne un dictionnaire qui contient les poids de portefeuille optimaux, les rendements et les variances prévus et réels et le ratio de sharpe. Il est important de noter que les rendements prévus utilisés pour l'optimisation doivent être obtenus à partir d'un modèle de prévision efficace pour obtenir des résultats pertinents. Il est également important de considérer les limites de risque et les coûts de transaction lors de la mise en œuvre de cette méthode
+   """
+)
+
+code12 = '''
+def actual_return(actual_ret, weight):
+    mean_return = mean_ret(actual_ret,actual_ret.shape[0])
+    actual_cov=actual_ret.cov()
+
+    portfolio_return = mean_ret.T.dot(weight)
+    protfolio_cov = weight.T.dot(actual_cov).dot(weight)
+    return portfolio_return,protfolio_cov
+
+def optimisation(predicted_ret, actual_ret, lam1, lam2):
+    mean_return = mean_ret(predicted_ret, predicted_ret.shape[0])
+    predicted_covariance = predicted_ret.cov()
+#Cost function
+    def f(weight):
+        return -(mean_return.T.dot(weight) - lam1*(weight.T.dot(predicted_covariance).dot(weight)) + lam2*norm(weight, ord=1))
+
+    opt_bounds = Bounds(0, 1)
+
+#Equality Constraints
+    def h(weight):
+        return sum(weight) - 1
+
+#Constraints Dictionary
+    cons = ({
+        'type' : 'eq',
+      'fun' : lambda weight: h(weight)
+  })
+
+#Solver
+    sol = minimize(f,
+                 x0 = np.ones(mean_return.shape[0]),
+                 constraints = cons,
+                 bounds = opt_bounds,
+                 options = {'disp': False},
+                 tol=10e-10)  
+
+#Predicted Results
+    weight = sol.x
+    predicted_portfolio_ret = weight.dot(mean_return)
+    portfolio_STD = weight.T.dot(predicted_covariance).dot(weight)
+  
+#Actual Results
+    portfolio_actual_returns, portfolio_actual_variance = actual_return(actual_ret, weight)
+    sharpe_ratio = portfolio_actual_returns/np.std(portfolio_actual_variance)
+
+    ret_dict = {'weights' : weight,
+              'predicted_returns' : predicted_portfolio_ret,
+              'predicted_variance' : portfolio_STD,
+              'actual_returns' : portfolio_actual_returns,
+              'actual_variance' : portfolio_actual_variance,
+              'sharpe_ratio': sharpe_ratio}
+  
+    return ret_dict
+'''
+st.code(code12, 
+language='python')
