@@ -26,7 +26,7 @@ st.dataframe(df)
 
 st.write('Informations concernant les coins:')
 data = yf.download(tickers)
-st.write(data)
+st.write(data['Close'])
 
 from scipy.optimize import minimize
 # Define portfolio optimization function
