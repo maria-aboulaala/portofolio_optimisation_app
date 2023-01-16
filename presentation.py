@@ -309,7 +309,7 @@ st.image('GRAPH.png')
 
 st.markdown(
     """
-    > la méthode mean() est utilisée pour calculer la moyenne des performances de tous les instruments pour obtenir une estimation globale de la performance des modèles testés.
+    > la méthode mean() est utilisée pour calculer le rendememt d'un portefeuille de ponderation egale ou chaque instrument est negocié en utilisant le modele.
    """
 )
 
