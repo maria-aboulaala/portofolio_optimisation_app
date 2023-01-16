@@ -27,20 +27,20 @@ st.dataframe(df)
 st.write('Informations concernant les valeurs du Close de chaque coins:')
 data = yf.download(tickers)
 st.write(data['Close'])
-data1 = data['Close']
+
 
 
 from scipy.optimize import minimize
 # Define portfolio optimization function
-def optimize_portfolio(data1, target_return):
-    n = len(data1.columns)
+def optimize_portfolio(data, target_return):
+    n = len(data.columns)
     init_guess = [1/n]*n
     bounds = [(0,1) for i in range(n)]
     def portfolio_return(weights):
-        returns = np.dot(data1,weights)
+        returns = np.dot(data,weights)
         return -1*np.mean(returns)
     def portfolio_volatility(weights):
-        returns = np.dot(data1,weights)
+        returns = np.dot(data,weights)
         std = np.std(returns)
         return std
     def target_function(weights):
@@ -52,7 +52,7 @@ def optimize_portfolio(data1, target_return):
 
 
 
-
+data1 = data['Close']
 # Optimize portfolio
 optimal_weights = optimize_portfolio(data1, target_return)
 
