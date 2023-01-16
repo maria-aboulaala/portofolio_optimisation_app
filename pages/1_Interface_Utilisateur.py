@@ -27,7 +27,7 @@ st.dataframe(df)
 st.write('Informations concernant les valeurs du Close de chaque coins:')
 data = yf.download(tickers)
 st.write(data['Close'])
-
+data1 = data['Close']
 from scipy.optimize import minimize
 # Define portfolio optimization function
 def optimize_portfolio(data, target_return):
@@ -52,7 +52,7 @@ def optimize_portfolio(data, target_return):
 
 
 # Optimize portfolio
-optimal_weights = optimize_portfolio(data, target_return)
+optimal_weights = optimize_portfolio(data1, target_return)
 
 # Show results
 st.write('Optimal weights:', optimal_weights)

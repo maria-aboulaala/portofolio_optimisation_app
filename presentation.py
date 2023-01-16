@@ -129,7 +129,7 @@ language='python')
 st.markdown(
     """
     **definir la strategie**
-    > La classe LogesticMLStrategy que vous avez fournie est une classe personnalisée qui hérite de la classe de base Strategy de la bibliothèque Backtrader. Elle est utilisée pour définir une stratégie de trading basée sur la régression logistique. 
+    > La classe LogesticMLStrategy une classe personnalisée qui hérite de la classe de base Strategy de la bibliothèque Backtesting. Elle est utilisée pour définir une stratégie de trading basée sur la régression logistique. 
 
     > La classe définit plusieurs variables d'instance qui peuvent être utilisées pour configurer le comportement de la stratégie, telles que le solveur utilisé pour entraîner le modèle de régression logistique, la pénalité utilisée pour réguler les paramètres du modèle, et le facteur de régulation C.
 
