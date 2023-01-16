@@ -52,9 +52,10 @@ def optimize_portfolio(data, target_return):
 
 
 
-data1 = data['Close']
+data = data['Close']
+
 # Optimize portfolio
-optimal_weights = optimize_portfolio(data1, target_return)
+optimal_weights = optimize_portfolio(data, target_return)
 
 # Show results
 st.write('Optimal weights:', optimal_weights)
