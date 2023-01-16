@@ -24,7 +24,7 @@ st.write('Vous avez choisi un portfeuille contenant:')
 df = pd.DataFrame(tickers)
 st.dataframe(df)
 
-st.write('Informations concernant les coins:')
+st.write('Informations concernant les valeurs du Close de chaque coins:')
 data = yf.download(tickers)
 st.write(data['Close'])
 
